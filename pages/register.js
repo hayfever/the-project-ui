@@ -1,7 +1,9 @@
 import Link from 'next/link'
-import { Button, Input } from 'reactstrap'
-import serialize from 'form-serialize'
+import Router from 'next/router'
+import cookie from 'react-cookie'
 import axios from 'axios'
+import serialize from 'form-serialize'
+import { Button, Input } from 'reactstrap'
 
 import Layout from '../containers/layout'
 
@@ -20,16 +22,29 @@ export default class Register extends React.Component {
     e.preventDefault()
     const body = serialize(e.currentTarget, { hash: true })
 
-    axios.request({
-      url: 'http://localhost:8000/users/create/',
-      method: 'post',
-      data: JSON.stringify(body),
+    let request = axios.create({
       headers: {
         'Content-Type': 'application/json'
       }
     })
+
+    request.post('http://localhost:8000/users/create/', JSON.stringify(body))
     .then((response) => {
-      console.log(response.data)
+      request.post('http://localhost:8000/users/api-token-auth/', JSON.stringify(body))
+      .then((response) => {
+        let date = new Date()
+        date.setDate(date.getDate() + 7)
+        const weekInSeconds = 60 * 60 * 24 * 7
+        const options = {
+          path: '/',
+          expires: date,
+          maxAge: weekInSeconds
+        }
+        cookie.save('token', response.data.token, options)
+        cookie.save('username', body.username, options)
+
+        Router.push('/')
+      })
     })
     .catch((error) => {
       console.log(error.response.data)

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Router from 'next/router'
 import cookie from 'react-cookie'
 import axios from 'axios'
+import serialize from 'form-serialize'
 import { Button, Input } from 'reactstrap'
 
 import Layout from '../containers/layout'
@@ -33,23 +34,37 @@ export default class Settings extends React.Component {
       }
     })
 
-    return { data: response.data }
+    return { user: response.data.user }
   }
 
   onSubmit(e) {
     e.preventDefault()
-    console.log('submit called')
+    const body = serialize(e.currentTarget, { hash: true })
+    const token = cookie.load('token')
+
+    axios.request({
+      url: 'http://localhost:8000/users/',
+      method: 'put',
+      data: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `JWT ${token}`
+      }
+    })
+    .then((response) => {
+      Router.push('/login')
+    })
   }
 
   render() {
     return <Layout loggedIn>
       <form style={style} onSubmit={this.onSubmit}>
         <label>Username</label>
-        <Input style={{ marginBottom: '10px' }} defaultValue={this.props.data.user.username} />
+        <Input name='username' style={{ marginBottom: '10px' }} defaultValue={this.props.user.username} />
         <label>New Password</label>
-        <Input type='password' style={{ marginBottom: '10px' }} />
+        <Input name='password' type='password' style={{ marginBottom: '10px' }} />
         <label>Confirm New Password</label>
-        <Input type='password' style={{ marginBottom: '10px' }} />
+        <Input name='confirm_password' type='password' style={{ marginBottom: '10px' }} />
         <Button color='primary' block type='submit' style={{ cursor: 'pointer', marginTop: '20px' }}>Submit</Button>
       </form>
     </Layout>

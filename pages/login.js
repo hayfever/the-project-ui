@@ -34,7 +34,7 @@ export default class Login extends React.Component {
     const body = serialize(e.currentTarget, { hash: true })
 
     axios.request({
-      url: 'http://localhost:8000/users/api-token-auth/',
+      url: `${process.env.API_HOST}/users/api-token-auth/`,
       method: 'post',
       data: JSON.stringify(body),
       headers: {

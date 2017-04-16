@@ -39,9 +39,9 @@ export default class Register extends React.Component {
       }
     })
 
-    request.post('http://localhost:8000/users/create/', JSON.stringify(body))
+    request.post(`${process.env.API_HOST}/users/create/`, JSON.stringify(body))
     .then((response) => {
-      request.post('http://localhost:8000/users/api-token-auth/', JSON.stringify(body))
+      request.post(`${process.env.API_HOST}/users/api-token-auth/`, JSON.stringify(body))
       .then((response) => {
         let date = new Date()
         date.setDate(date.getDate() + 7)

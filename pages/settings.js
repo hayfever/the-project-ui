@@ -23,14 +23,14 @@ export default class Settings extends React.Component {
 
     const token = cookie.load('token')
     const response = await axios.request({
-      url: 'http://localhost:8000/users/',
+      url: `${process.env.API_HOST}/users/`,
       method: 'get',
       headers: {
         'Authorization': `JWT ${token}`
       }
     }).catch((error) => {
       if (req){
-        res.writeHead(302, { 'Location': '/login' })
+        res.writeHead(302, { 'Location': '/login?message=Please log in first.' })
       } else {
         Router.push('/login')
       }
@@ -50,7 +50,7 @@ export default class Settings extends React.Component {
     const token = cookie.load('token')
 
     axios.request({
-      url: 'http://localhost:8000/users/',
+      url: `${process.env.API_HOST}/users/`,
       method: 'put',
       data: JSON.stringify(body),
       headers: {

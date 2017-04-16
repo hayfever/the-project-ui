@@ -22,7 +22,7 @@ const logout = () => {
 export default ({ loggedIn }) => (
   <Navbar color='faded' toggleable style={navbarStyle}>
     <Container>
-      <Link><a href='/' className='navbar-brand' style={linkStyle}>THE PROJECT</a></Link>
+      <Link href='/'><a className='navbar-brand' style={linkStyle}>THE PROJECT</a></Link>
       <Collapse isOpen={true} navbar>
         <Nav className='ml-auto' navbar>
           <NavItem>

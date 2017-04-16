@@ -16,14 +16,14 @@ export default class Index extends React.Component {
 
     const token = cookie.load('token')
     const response = await axios.request({
-      url: 'http://localhost:8000/tweets/',
+      url: `${process.env.API_HOST}/tweets/`,
       method: 'get',
       headers: {
         'Authorization': `JWT ${token}`
       }
     }).catch((error) => {
       if (req){
-        res.writeHead(302, { 'Location': '/login' })
+        res.writeHead(302, { 'Location': '/login?message=Please log in first.' })
       } else {
         Router.push('/login')
       }

@@ -9,7 +9,7 @@ import Layout from '../containers/layout'
 import TweetCard from '../components/tweet_card'
 
 export default class Index extends React.Component {
-  static async getInitialProps({ req, res }) {
+  static async getInitialProps({ req, res, query }) {
     if (req) {
       cookie.plugToRequest(req, res)
     }
@@ -29,7 +29,7 @@ export default class Index extends React.Component {
       }
     })
 
-    return { data: response.data }
+    return { data: response.data, ...query }
   }
 
   tweet_data(tweets) {
@@ -66,7 +66,7 @@ export default class Index extends React.Component {
   }
 
   render() {
-    return <Layout loggedIn>
+    return <Layout loggedIn message={this.props.message}>
       <h4 style={{ margin: '20px 0 30px 0', width: '100%'}}>
         Tweets By Hour
         <div className='float-right'>

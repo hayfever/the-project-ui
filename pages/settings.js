@@ -3,9 +3,11 @@ import Router from 'next/router'
 import cookie from 'react-cookie'
 import axios from 'axios'
 import serialize from 'form-serialize'
+import isEmpty from 'lodash/isEmpty'
 import { Button, Input } from 'reactstrap'
 
 import Layout from '../containers/layout'
+import FormAlert from '../components/form_alert'
 
 const style = {
   maxWidth: '330px',
@@ -14,7 +16,7 @@ const style = {
 }
 
 export default class Settings extends React.Component {
-  static async getInitialProps({ req, res }) {
+  static async getInitialProps({ req, res, query }) {
     if (req) {
       cookie.plugToRequest(req, res)
     }
@@ -34,10 +36,15 @@ export default class Settings extends React.Component {
       }
     })
 
-    return { user: response.data.user }
+    return { user: response.data.user, ...query }
   }
 
-  onSubmit(e) {
+  constructor(props) {
+    super(props)
+    this.state = { errors: {} }
+  }
+
+  onSubmit = (e) => {
     e.preventDefault()
     const body = serialize(e.currentTarget, { hash: true })
     const token = cookie.load('token')
@@ -52,13 +59,24 @@ export default class Settings extends React.Component {
       }
     })
     .then((response) => {
-      Router.push('/login')
+      Router.push({
+        pathname: '/login',
+        query: { message: 'Credentials updated. Please log in again.' }
+      })
+    })
+    .catch((error) => {
+      this.setState({
+        errors: error.response.data.errors
+      })
     })
   }
 
   render() {
-    return <Layout loggedIn>
+    return <Layout loggedIn message={this.props.message}>
       <form style={style} onSubmit={this.onSubmit}>
+        {
+          !isEmpty(this.state.errors) && <FormAlert {...this.state} />
+        }
         <label>Username</label>
         <Input name='username' style={{ marginBottom: '10px' }} defaultValue={this.props.user.username} />
         <label>New Password</label>

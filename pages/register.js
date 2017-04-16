@@ -3,9 +3,11 @@ import Router from 'next/router'
 import cookie from 'react-cookie'
 import axios from 'axios'
 import serialize from 'form-serialize'
+import isEmpty from 'lodash/isEmpty'
 import { Button, Input } from 'reactstrap'
 
 import Layout from '../containers/layout'
+import FormAlert from '../components/form_alert'
 
 const style = {
   maxWidth: '330px',
@@ -18,7 +20,16 @@ const inputMargin = {
 }
 
 export default class Register extends React.Component {
-  onSubmit(e) {
+  static async getInitialProps({ query }) {
+    return { ...query }
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = { errors: {} }
+  }
+
+  onSubmit = (e) => {
     e.preventDefault()
     const body = serialize(e.currentTarget, { hash: true })
 
@@ -47,13 +58,18 @@ export default class Register extends React.Component {
       })
     })
     .catch((error) => {
-      console.log(error.response.data)
+      this.setState({
+        errors: error.response.data.errors
+      })
     })
   }
 
   render() {
-    return <Layout>
+    return <Layout message={this.props.message}>
       <form style={style} onSubmit={this.onSubmit}>
+        {
+          !isEmpty(this.state.errors) && <FormAlert {...this.state} />
+        }
         <label>Username</label>
         <Input name='username' style={inputMargin} />
         <label>Password</label>
@@ -64,7 +80,7 @@ export default class Register extends React.Component {
       </form>
       <p className='text-center'>
         <small>
-          Already have an account yet? <Link href='/login'><a>Login here!</a></Link>
+          Already have an account yet? <Link href='/login'><a>Log in here!</a></Link>
         </small>
       </p>
     </Layout>

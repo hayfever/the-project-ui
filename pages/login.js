@@ -3,9 +3,11 @@ import Router from 'next/router'
 import cookie from 'react-cookie'
 import axios from 'axios'
 import serialize from 'form-serialize'
+import isEmpty from 'lodash/isEmpty'
 import { Button, Input } from 'reactstrap'
 
 import Layout from '../containers/layout'
+import FormAlert from '../components/form_alert'
 
 const style = {
   maxWidth: '330px',
@@ -14,8 +16,21 @@ const style = {
 }
 
 export default class Login extends React.Component {
+  static async getInitialProps({ query }) {
+    return { ...query }
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = { errors: {} }
+  }
+
   onSubmit = (e) => {
     e.preventDefault()
+    this.setState({
+      errors: {}
+    })
+
     const body = serialize(e.currentTarget, { hash: true })
 
     axios.request({
@@ -41,13 +56,18 @@ export default class Login extends React.Component {
       Router.push('/')
     })
     .catch((error) => {
-      console.log(error)
+      this.setState({
+        errors: error.response.data
+      })
     })
   }
 
   render() {
-    return <Layout>
+    return <Layout message={this.props.message}>
       <form style={style} onSubmit={this.onSubmit}>
+        {
+          !isEmpty(this.state.errors) && <FormAlert {...this.state} hideLabel />
+        }
         <label>Username</label>
         <Input name='username' style={{ marginBottom: '10px' }} />
         <label>Password</label>

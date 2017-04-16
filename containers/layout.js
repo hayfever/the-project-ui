@@ -1,9 +1,9 @@
 import Head from 'next/head'
-import { Container } from 'reactstrap'
+import { Alert, Container } from 'reactstrap'
 
 import Navbar from '../components/navbar'
 
-export default ({ children, title = 'THE PROJECT', loggedIn }) => (
+export default ({ children, title = 'THE PROJECT', loggedIn, message }) => (
   <div>
     <Head>
       <title>{title}</title>
@@ -12,6 +12,13 @@ export default ({ children, title = 'THE PROJECT', loggedIn }) => (
       <link rel='stylesheet' href='/static/bootstrap.min.css' />
     </Head>
     <Navbar loggedIn={loggedIn} />
+    {
+      message && <Container className='text-center'>
+        <Alert color='info'>
+          {message}
+        </Alert>
+      </Container>
+    }
     <Container>
       {children}
     </Container>

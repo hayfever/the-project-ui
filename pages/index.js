@@ -70,7 +70,7 @@ export default class Index extends React.Component {
       <h4 style={{ margin: '20px 0 30px 0', width: '100%'}}>
         Tweets By Hour
         <div className='float-right'>
-          #radiohead - Last 7 Days
+          #coffee - Last 7 Days
         </div>
       </h4>
       <Row>
